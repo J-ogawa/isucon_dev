@@ -2,6 +2,10 @@ require 'digest/sha1'
 require 'mysql2'
 require 'sinatra/base'
 
+# added
+require 'newrelic_rpm'
+
+
 class App < Sinatra::Base
   configure do
     set :session_secret, 'tonymoris'
@@ -15,6 +19,9 @@ class App < Sinatra::Base
     require 'sinatra/reloader'
     register Sinatra::Reloader
   end
+
+  # no js injection in the page
+  newrelic_ignore_enduser
 
   helpers do
     def user
@@ -241,7 +248,7 @@ class App < Sinatra::Base
     @self_profile = user['id'] == @user['id']
     erb :profile
   end
-  
+
   get '/add_channel' do
     if user.nil?
       return redirect '/login', 303
