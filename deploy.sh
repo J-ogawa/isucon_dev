@@ -14,6 +14,7 @@ cd /home/isucon/isubata/webapp/ruby
 sudo rm -f /var/log/nginx/access.log
 sudo systemctl restart mysql.service
 sudo systemctl restart nginx.service
+sudo systemctl daemon-reload
 sudo systemctl restart isubata.ruby.service
 exit
 echo "======================================================"
@@ -35,6 +36,7 @@ cd /home/isucon/isubata/webapp/ruby
 sudo rm -f /var/log/nginx/access.log
 sudo systemctl restart mysql.service
 sudo systemctl restart nginx.service
+sudo systemctl daemon-reload
 sudo systemctl restart isubata.ruby.service
 exit
 echo "======================================================"
@@ -56,6 +58,7 @@ cd /home/isucon/isubata/webapp/ruby
 sudo rm -f /var/log/mysql/mysql-slow.log
 sudo systemctl restart mysql.service
 sudo systemctl restart nginx.service
+sudo systemctl daemon-reload
 sudo systemctl restart isubata.ruby.service
 exit
 echo "======================================================"
