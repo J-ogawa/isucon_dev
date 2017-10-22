@@ -316,13 +316,7 @@ class App < Sinatra::Base
       statement.execute(avatar_name, user['id'])
       statement.close
       begin
-        # write_icon_to_public(avater_name, avatar_data)
-        path = Pathname.new('/home/isucon/isubata/webapp/public/icons').join(file_name).to_s
-        return if File.exists?(path)
-        File.open(path, 'wb') { |f| f.write content }
-      rescue
-        nil
-      end
+        write_icon_to_public(avatar_name, avatar_data)
     end
 
     if !display_name.nil? || !display_name.empty?
