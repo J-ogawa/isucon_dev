@@ -37,3 +37,23 @@ sudo systemctl restart isubata.ruby.service
 exit
 echo "======================================================"
 EOS
+
+ssh_host3="isucon@59.106.213.87"
+cwd=`dirname "${0}"`
+expr "${0}" : "/.*" > /dev/null || cwd=`(cd "${cwd}" && pwd)`
+
+rsync -av --exclude=".git/*" --exclude="ruby/.bundle/*" --exclude="ruby/vendor/bundle/**/*" -e ssh "${cwd}/" "${ssh_host3}:/home/isucon/"
+
+ssh -t -t $ssh_host3 <<-EOS
+echo "=========== ${ssh_host3} =========="
+sudo sysctl -p
+echo "-----------"
+ulimit -a
+cd /home/isucon/isubata/webapp/ruby
+/home/isucon/local/ruby/bin/bundle install
+sudo systemctl restart mysql.service
+sudo systemctl restart nginx.service
+sudo systemctl restart isubata.ruby.service
+exit
+echo "======================================================"
+EOS
