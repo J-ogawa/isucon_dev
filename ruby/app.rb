@@ -38,7 +38,6 @@ class App < Sinatra::Base
     db.query("DELETE FROM image WHERE id > 1001")
     db.query("DELETE FROM channel WHERE id > 10")
     db.query("DELETE FROM message WHERE id > 10000")
-    write_exisiting_icon_data_to_public
     204
   end
 
@@ -333,6 +332,7 @@ class App < Sinatra::Base
     ext = file_name.include?('.') ? File.extname(file_name) : ''
     mime = ext2mime(ext)
     if !row.nil? && !mime.empty?
+      write_icon_to_public(file_name, row['data'])
       content_type mime
       return row['data']
     end
