@@ -32,6 +32,7 @@ echo "-----------"
 ulimit -a
 cd /home/isucon/isubata/webapp/ruby
 /home/isucon/local/ruby/bin/bundle install
+sudo rm -f /var/log/nginx/access.log
 sudo systemctl restart mysql.service
 sudo systemctl restart nginx.service
 sudo systemctl restart isubata.ruby.service
@@ -52,7 +53,7 @@ echo "-----------"
 ulimit -a
 cd /home/isucon/isubata/webapp/ruby
 /home/isucon/local/ruby/bin/bundle install
-sudo rm -f /var/log/nginx/access.log
+sudo rm -f /var/log/mysql/mysql-slow.log
 sudo systemctl restart mysql.service
 sudo systemctl restart nginx.service
 sudo systemctl restart isubata.ruby.service
