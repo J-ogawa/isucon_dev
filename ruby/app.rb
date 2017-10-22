@@ -39,7 +39,7 @@ class App < Sinatra::Base
     db.query("DELETE FROM channel WHERE id > 10")
     db.query("DELETE FROM message WHERE id > 10000")
     db.query("DELETE FROM haveread")
-    # write_exisiting_icon_data_to_public
+    write_exisiting_icon_data_to_public
     204
   end
 
@@ -315,7 +315,11 @@ class App < Sinatra::Base
       statement = db.prepare('UPDATE user SET avatar_icon = ? WHERE id = ?')
       statement.execute(avatar_name, user['id'])
       statement.close
-      write_icon_to_public(avater_name, avatar_data)
+      begin
+        write_icon_to_public(avater_name, avatar_data)
+      rescue
+        nil
+      end
     end
 
     if !display_name.nil? || !display_name.empty?
