@@ -218,9 +218,9 @@ class App < Sinatra::Base
     @messages.reverse!
 
     statement = db.prepare('SELECT COUNT(*) as cnt FROM message WHERE channel_id = ?')
-    cnt = statement.execute(@channel_id).first['cnt'].to_f
+    cnt = statement.execute(@channel_id).first['cnt'].to_i
     statement.close
-    @max_page = cnt == 0 ? 1 :(cnt / n).ceil
+    @max_page = cnt == 0 ? 1 : ((cnt + n - 1) / n)
 
     return 400 if @page > @max_page
 
