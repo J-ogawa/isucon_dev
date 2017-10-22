@@ -39,6 +39,7 @@ class App < Sinatra::Base
     db.query("DELETE FROM channel WHERE id > 10")
     db.query("DELETE FROM message WHERE id > 10000")
     db.query("DELETE FROM haveread")
+    write_exisiting_icon_data_to_public
     204
   end
 
@@ -309,12 +310,13 @@ class App < Sinatra::Base
     end
 
     if !avatar_name.nil? && !avatar_data.nil?
-      statement = db.prepare('INSERT INTO image (name, data) VALUES (?, ?)')
-      statement.execute(avatar_name, avatar_data)
+      statement = db.prepare('INSERT INTO image (name) VALUES (?)')
+      statement.execute(avatar_name)
       statement.close
       statement = db.prepare('UPDATE user SET avatar_icon = ? WHERE id = ?')
       statement.execute(avatar_name, user['id'])
       statement.close
+      write_icon_to_public(avatar_name, avatar_data)
     end
 
     if !display_name.nil? || !display_name.empty?
@@ -326,6 +328,7 @@ class App < Sinatra::Base
     redirect '/', 303
   end
 
+  # obsolete, served by nginx
   get '/icons/:file_name' do
     file_name = params[:file_name]
     statement = db.prepare('SELECT * FROM image WHERE name = ?')
@@ -407,5 +410,18 @@ class App < Sinatra::Base
       return 'image/gif'
     end
     ''
+  end
+
+  def write_icon_to_public(file_name, content)
+    path = Pathname.new('/home/isucon/isubata/webapp/public/icons').join(file_name).to_s
+    return if File.exists?(path)
+    File.open(path, 'wb') { |f| f.write content }
+  end
+
+  def write_exisiting_icon_data_to_public
+    images = db.query('SELECT * FROM image').to_a
+    images.each do |image|
+      write_icon_to_public(image['name'], image['data'])
+    end
   end
 end
