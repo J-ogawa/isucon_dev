@@ -11,7 +11,6 @@ ulimit -a
 echo "======================================================"
 cd /home/isucon/isubata/webapp/ruby
 /home/isucon/local/ruby/bin/bundle install
-exit
 sudo systemctl restart mysql.service
 sudo systemctl restart nginx.service
 sudo systemctl restart isubata.ruby.service
