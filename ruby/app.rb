@@ -118,18 +118,23 @@ class App < Sinatra::Base
 
     channel_id = params[:channel_id].to_i
     last_message_id = params[:last_message_id].to_i
-    statement = db.prepare('SELECT * FROM message WHERE id > ? AND channel_id = ? ORDER BY id DESC LIMIT 100')
+
+
+    statement = db.prepare('SELECT message.id,message.content,message.created_at,user.name,user.display_name,user.avatar_icon FROM message LEFT JOIN user ON message.user_id = user.id WHERE message.id > ? AND channel_id = ? ORDER BY message.id DESC LIMIT 100')
     rows = statement.execute(last_message_id, channel_id).to_a
     response = []
     rows.each do |row|
+      puts row
       r = {}
       r['id'] = row['id']
-      statement = db.prepare('SELECT name, display_name, avatar_icon FROM user WHERE id = ?')
-      r['user'] = statement.execute(row['user_id']).first
+      r['user'] = {
+        'name' => row['name'],
+        'display_name' => row['display_name'],
+        'avatar_icon' => row['avatar_icon']
+      }
       r['date'] = row['created_at'].strftime("%Y/%m/%d %H:%M:%S")
       r['content'] = row['content']
       response << r
-      statement.close
     end
     response.reverse!
 
@@ -241,7 +246,7 @@ class App < Sinatra::Base
     @self_profile = user['id'] == @user['id']
     erb :profile
   end
-  
+
   get '/add_channel' do
     if user.nil?
       return redirect '/login', 303
@@ -380,14 +385,9 @@ class App < Sinatra::Base
   end
 
   def get_channel_list_info(focus_channel_id = nil)
+    statement = db.prepare('SELECT description FROM channel WHERE id = ?')
+    description = statement.execute(focus_channel_id).first['description']
     channels = db.query('SELECT * FROM channel ORDER BY id').to_a
-    description = ''
-    channels.each do |channel|
-      if channel['id'] == focus_channel_id
-        description = channel['description']
-        break
-      end
-    end
     [channels, description]
   end
 
