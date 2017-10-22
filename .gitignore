@@ -1,0 +1,3 @@
+ruby/.bundle/
+ruby/vendor/
+db/isucon7q-initial-dataset.sql.gz
