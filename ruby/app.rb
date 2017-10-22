@@ -38,7 +38,7 @@ class App < Sinatra::Base
     db.query("DELETE FROM image WHERE id > 1001")
     db.query("DELETE FROM channel WHERE id > 10")
     db.query("DELETE FROM message WHERE id > 10000")
-    db.query("DELETE FROM haveread")
+    # db.query("DELETE FROM haveread")
     write_exisiting_icon_data_to_public
     204
   end
@@ -139,12 +139,14 @@ class App < Sinatra::Base
     response.reverse!
 
     max_message_id = rows.empty? ? 0 : rows.map { |row| row['id'] }.max
-    statement = db.prepare([
-      'INSERT INTO haveread (user_id, channel_id, message_id, updated_at, created_at) ',
-      'VALUES (?, ?, ?, NOW(), NOW()) ',
-      'ON DUPLICATE KEY UPDATE message_id = ?, updated_at = NOW()',
-    ].join)
-    statement.execute(user_id, channel_id, max_message_id, max_message_id)
+    session[:haveread] ||= {}
+    session[:haveread][channel_id] = max_message_id
+    # statement = db.prepare([
+    #   'INSERT INTO haveread (user_id, channel_id, message_id, updated_at, created_at) ',
+    #   'VALUES (?, ?, ?, NOW(), NOW()) ',
+    #   'ON DUPLICATE KEY UPDATE message_id = ?, updated_at = NOW()',
+    # ].join)
+    # statement.execute(user_id, channel_id, max_message_id, max_message_id)
 
     content_type :json
     response.to_json
@@ -163,9 +165,10 @@ class App < Sinatra::Base
 
     res = []
     channel_ids.each do |channel_id|
-      statement = db.prepare('SELECT * FROM haveread WHERE user_id = ? AND channel_id = ?')
-      row = statement.execute(user_id, channel_id).first
-      statement.close
+      # statement = db.prepare('SELECT * FROM haveread WHERE user_id = ? AND channel_id = ?')
+      # row = statement.execute(user_id, channel_id).first
+      # statement.close
+      row = session[:haveread][channel_id] if session[:haveread]
       r = {}
       r['channel_id'] = channel_id
       r['unread'] = if row.nil?
