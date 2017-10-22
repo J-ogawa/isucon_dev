@@ -85,7 +85,7 @@ class App < Sinatra::Base
 
   post '/login' do
     name = params[:name]
-    statement = db.prepare('SELECT * FROM user WHERE name = ?')
+    statement = db.prepare('SELECT * FROM user WHERE name = ? LIMIT 1')
     row = statement.execute(name).first
     if row.nil? || row['password'] != Digest::SHA1.hexdigest(row['salt'] + params[:password])
       return 403
@@ -96,6 +96,7 @@ class App < Sinatra::Base
 
   get '/logout' do
     session[:user_id] = nil
+    session[:user] = nil
     redirect '/', 303
   end
 
@@ -230,7 +231,7 @@ class App < Sinatra::Base
     @channels, = get_channel_list_info
 
     user_name = params[:user_name]
-    statement = db.prepare('SELECT * FROM user WHERE name = ?')
+    statement = db.prepare('SELECT * FROM user WHERE name = ? LIMIT 1')
     @user = statement.execute(user_name).first
     statement.close
 
@@ -318,6 +319,8 @@ class App < Sinatra::Base
       statement.close
     end
 
+   session[:user] = nil
+
     redirect '/', 303
   end
 
@@ -354,9 +357,13 @@ class App < Sinatra::Base
   end
 
   def db_get_user(user_id)
-    statement = db.prepare('SELECT * FROM user WHERE id = ?')
+    user = session[:user]
+    return user if user
+
+    statement = db.prepare('SELECT * FROM user WHERE id = ? LIMIT 1')
     user = statement.execute(user_id).first
     statement.close
+    session[:user] = user
     user
   end
 
