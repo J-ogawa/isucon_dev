@@ -385,8 +385,12 @@ class App < Sinatra::Base
   end
 
   def get_channel_list_info(focus_channel_id = nil)
-    statement = db.prepare('SELECT description FROM channel WHERE id = ?')
-    description = statement.execute(focus_channel_id).first['description']
+    if focus_channel_id
+      statement = db.prepare('SELECT description FROM channel WHERE id = ?')
+      description = statement.execute(focus_channel_id).first['description']
+    else
+      description = ''
+    end
     channels = db.query('SELECT * FROM channel ORDER BY id').to_a
     [channels, description]
   end
