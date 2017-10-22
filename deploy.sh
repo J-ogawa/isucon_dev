@@ -12,7 +12,6 @@ ulimit -a
 cd /home/isucon/isubata/webapp/ruby
 /home/isucon/local/ruby/bin/bundle install
 sudo rm -f /var/log/nginx/access.log
-sudo systemctl restart mysql.service
 sudo systemctl restart nginx.service
 sudo systemctl stop isubata.ruby.service
 sudo systemctl daemon-reload
@@ -36,7 +35,6 @@ cd /home/isucon/isubata/webapp/ruby
 /home/isucon/local/ruby/bin/bundle install
 sudo rm -f /var/log/nginx/access.log
 sudo systemctl restart mysql.service
-sudo systemctl restart nginx.service
 sudo systemctl daemon-reload
 sudo systemctl stop isubata.ruby.service
 sudo systemctl daemon-reload
@@ -60,10 +58,6 @@ cd /home/isucon/isubata/webapp/ruby
 /home/isucon/local/ruby/bin/bundle install
 sudo rm -f /var/log/mysql/mysql-slow.log
 sudo systemctl restart mysql.service
-sudo systemctl restart nginx.service
-sudo systemctl stop isubata.ruby.service
-sudo systemctl daemon-reload
-sudo systemctl start isubata.ruby.service
 exit
 echo "======================================================"
 EOS
