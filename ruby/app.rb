@@ -39,7 +39,7 @@ class App < Sinatra::Base
     db.query("DELETE FROM channel WHERE id > 10")
     db.query("DELETE FROM message WHERE id > 10000")
     db.query("DELETE FROM haveread")
-    write_exisiting_icon_data_to_public
+    # write_exisiting_icon_data_to_public
     204
   end
 
