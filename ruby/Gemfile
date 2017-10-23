@@ -4,3 +4,6 @@ gem 'mysql2'
 gem 'puma'
 gem 'sinatra'
 gem 'sinatra-contrib'
+
+# added
+gem 'newrelic_rpm'
